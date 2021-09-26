@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, Input, OnChanges, OnInit } from '@angular/core';
 import { IRate } from 'src/app/models/IRate';
 import * as Highcharts from 'highcharts';
+import { IDailyBnrReport } from 'src/app/models/IDailyBnrReport';
 
 @Component({
   selector: 'app-chart-rates',
@@ -9,8 +10,10 @@ import * as Highcharts from 'highcharts';
 })
 export class ChartRatesComponent implements OnInit, AfterViewInit, OnChanges {
 
-  @Input() allRates: IRate[];
+  @Input() report: IDailyBnrReport;
+
   public readonly chartContainerId: string = "chartContainerId";
+
   private chart: Highcharts.Chart;
 
   private afterViewInitTriggered: boolean = false;
@@ -27,17 +30,18 @@ export class ChartRatesComponent implements OnInit, AfterViewInit, OnChanges {
     this.buildChart();
   }
   private buildChart() {
-    if (!this.allRates || !this.afterViewInitTriggered) {
+    if (!this.report || !this.afterViewInitTriggered) {
       return;
     }
 
-    this.chart = Highcharts.chart(this.chartContainerId, getOptionsFromRates(this.allRates));
+    this.chart = Highcharts.chart(this.chartContainerId, getOptionsFromRates(this.report));
   }
 }
 
-function getOptionsFromRates(allRates: IRate[]): any {
-  let title = "Current Rates";
+function getOptionsFromRates(report: IDailyBnrReport): any {
   var series = [];
+  const allRates = report.rates;
+  const title = report.date;
 
   allRates.forEach((rate: IRate) => {
     if (rate.currencyName == "XAU")
@@ -53,6 +57,10 @@ function getOptionsFromRates(allRates: IRate[]): any {
   return {
     chart: {
       type: 'column'
+
+    },
+    title: {
+      text: "Current bnr rates"
     },
     xAxis: {
       categories: [title]
