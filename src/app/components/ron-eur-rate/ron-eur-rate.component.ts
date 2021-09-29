@@ -20,7 +20,14 @@ export class RonEurRateComponent implements OnInit, OnChanges {
 
   }
   ngOnChanges() {
-    this.eurRate = this.report.rates.find(o => o.currencyName == "EUR").rate;
+    if (this.report == null)
+      return;
     this.date = this.report.date;
+    if (this.report.rates == null)
+      return;
+    var eurRateObj = this.report.rates.find(o => o.currencyName == "EUR");
+
+    if (eurRateObj)
+      this.eurRate = eurRateObj.rate;
   }
 }

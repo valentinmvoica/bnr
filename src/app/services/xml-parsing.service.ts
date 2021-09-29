@@ -22,24 +22,32 @@ export class XmlParsingService {
 }
 
 function extractRates(data): IDailyBnrReport {
-  let currentDate = new Date(data.DataSet.Body[0].Cube[0]["$"].date).toLocaleDateString();
+  try {
+    let currentDate = new Date(data.DataSet.Body[0].Cube[0]["$"].date).toLocaleDateString();
 
-  var allRawRates = data.DataSet.Body[0].Cube[0].Rate;
-  var allRates: Array<IRate> = [];
-  for (var i = 0; i < allRawRates.length; i++) {
-    let currentRate = data.DataSet.Body[0].Cube[0].Rate[i];
+    var allRawRates = data.DataSet.Body[0].Cube[0].Rate;
+    var allRates: Array<IRate> = [];
 
-    let currencyName = currentRate["$"].currency;
-    let rate = Number(currentRate["_"]);
-    allRates.push({
-      currencyName: currencyName,
-      rate: rate
-    });
+    for (var i = 0; i < allRawRates.length; i++) {
+
+      let currentRate = data.DataSet.Body[0].Cube[0].Rate[i];
+      let currencyName = currentRate["$"].currency;
+      let rate = Number(currentRate["_"]);
+
+      allRates.push({
+        currencyName: currencyName,
+        rate: rate
+      });
+
+    }
+
+    return {
+      date: currentDate,
+      rates: allRates
+    };
+
+  } catch (error) {
+    console.error("0x2A: unexpeced bnr xml format ", error)
+    return undefined;
   }
-  console.warn(allRates)
-
-  return {
-    date: currentDate,
-    rates: allRates
-  };
 }

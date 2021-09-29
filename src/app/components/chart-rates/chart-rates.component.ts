@@ -40,10 +40,11 @@ export class ChartRatesComponent implements OnInit, AfterViewInit, OnChanges {
 
 function getOptionsFromRates(report: IDailyBnrReport): any {
   var series = [];
-  const allRates = report.rates;
-  const title = report.date;
 
-  allRates.forEach((rate: IRate) => {
+  if (!report.rates || !report.date)
+    return;
+
+  report.rates.forEach((rate: IRate) => {
     if (rate.currencyName == "XAU")
       return true;
     series.push(
@@ -63,7 +64,7 @@ function getOptionsFromRates(report: IDailyBnrReport): any {
       text: "Current bnr rates"
     },
     xAxis: {
-      categories: [title]
+      categories: [report.date]
     },
     series: series
   }
